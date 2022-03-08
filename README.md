@@ -19,7 +19,7 @@ source .venv/bin/activate
 
 While in the venv, you can run the script using
 ```
-python dl-container-logs.py <TRACKING_URL>
+python dl-container-logs.py <APP_ATTEMPT_URL>
 ```
 
 All of the container logs will go into `logs/container-logs`. You can use VSCode to quickly search across all the container logs.
