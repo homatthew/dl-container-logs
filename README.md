@@ -22,6 +22,8 @@ While in the venv, you can run the script using
 python dl-container-logs.py <TRACKING_URL>
 ```
 
+All of the container logs will go into `logs/container-logs`. You can use VSCode to quickly search across all the container logs.
+
 After you are done, exit the python virtual env using
 ```
 deactivate
