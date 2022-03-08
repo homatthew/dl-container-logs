@@ -1,4 +1,8 @@
 # Setup
+Run kinit in your shell to authorize the script to access hadoop logs on your behalf
+```
+kinit
+```
 Set up your virtual environment / dependencies inside the repo. This is a one time operation
 ```
 git clone https://github.com/homatthew/dl-container-logs.git
