@@ -1,4 +1,4 @@
-# HDFS Download All TaskRunner Logs
+# HDFS / Yarn Download All Gobblin TaskRunner Logs
 Requires `Python` version `3.8` or higher
 
 ## Setup

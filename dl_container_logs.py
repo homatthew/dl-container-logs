@@ -5,7 +5,8 @@ from requests_kerberos import HTTPKerberosAuth
 import re
 import os
 import shutil
-import time
+import datetime
+import zoneinfo
 
 simulation = None
 
@@ -28,12 +29,10 @@ def get_log_urls(tracking_html, proxy_user, date, num_processes):
 def get_logs_by_date(container_urls, date, num_processes):
   m = multiprocessing.Manager()
   q = m.Queue()
-  s = time.time()
   with multiprocessing.Pool(processes=num_processes) as pool:
     tasks = [(url, date, q) for url in container_urls]
     pool.starmap(get_container_log_urls, tasks)
     q.put(None) # termination signal
-  print("By date get all logs", time.time() - s)
 
   return [url for url in iter(q.get, None)]
 
@@ -43,7 +42,8 @@ def get_container_log_urls(url, date, return_log_urls):
 
   date_suffix_regex = f'<a href="\/node\/containerlogs\/.*\/GobblinYarnTaskRunner\.stdout(\.{date}[0-9\-\.]+)\/\?start='
   container_log_urls = [f'{url}/GobblinYarnTaskRunner.stdout{date_suffix[0]}/?start=0' for line in response.text.split('\n') if (date_suffix:=re.findall(date_suffix_regex, line))]
-  if len(container_log_urls) < 24:
+
+  if len(container_log_urls) < 24 and itIsToday(date):
     # download the most recent hour's data too
     container_log_urls.append(f'{url}/GobblinYarnTaskRunner.stdout/?start=0')
   for url in container_log_urls:
@@ -85,6 +85,13 @@ def download(url, file_name, tasksCompleted, lock, totalTasks, simulation):
     tasksCompleted.value += 1
     print(f'{tasksCompleted.value}/{totalTasks}', end = "\r")
 
+def itIsToday(isoDate):
+  gridtz = zoneinfo.ZoneInfo('America/Los_Angeles')
+
+  today = datetime.datetime.now(tz=datetime.timezone.utc).astimezone(gridtz)
+  given_date = datetime.datetime.fromisoformat(isoDate).date()
+  return today.date() == given_date
+
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='script argument parser')
   parser.add_argument('app_attempt_url', help="URL of hadoop app attempt tracking. This URL is obtained by clicking on the attempt id of the tracking_url from Azkaban")
@@ -97,7 +104,11 @@ if __name__ == '__main__':
   parser.add_argument('-c', '--clean', default=False, help="Delete all previous log files", action="store_true")
 
   args = parser.parse_args()
+  if re.match("\d{4}-\d{2}-\d{2}", args.date) is None:
+    raise argparse.ArgumentTypeError("Date must be in format YYYY-MM-DD")
+
   if args.clean:
-    shutil.rmtree("logs")
+    if os.path.exists("logs"):
+      shutil.rmtree("logs")
   simulation = args.simulation
   main(args.app_attempt_url, args.processes, args.user, args.date)
