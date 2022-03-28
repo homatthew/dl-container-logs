@@ -17,6 +17,7 @@ python -m pip install -r requirements.txt
 
 Every following time, you can enter the venv using without running the above commands:
 ```
+kinit
 source .venv/bin/activate
 ```
 
