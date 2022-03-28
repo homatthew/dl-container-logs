@@ -23,7 +23,7 @@ source .venv/bin/activate
 
 While in the venv, you can run the script using
 ```
-python dl-container-logs.py <APP_ATTEMPT_URL>
+python dl_container_logs.py <APP_ATTEMPT_URL>
 ```
 Where the `<APP_ATTEMPT_URL>` looks like `http://<GRID_URL>/cluster/appattempt/appattempt_<SOME_NUMBERS>`
 
