@@ -1,5 +1,5 @@
 # HDFS / Yarn Download All Gobblin TaskRunner Logs
-Requires `Python` version `3.8` or higher
+Requires `Python` version `3.9` or higher
 
 ## Setup
 Run kinit in your shell to authorize the script to access hadoop logs on your behalf
